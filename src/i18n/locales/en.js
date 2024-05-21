@@ -215,6 +215,17 @@ const en = {
     empty_index_name: "Declared an index with no name in table '{{tableName}}'",
     export_json: "Export json",
     format: "Format",
+    export_excel: "Export excel",
+    fields: "Fields",
+    source_table: "Source table",
+    source_field: "Source field",
+    foreign_table: "Foreign table",
+    foreign_field: "Foreign field",
+    update_constraint: "Update constraint",
+    delete_constraint: "Delete constraint",
+    yes: "Yes",
+    diagram: "Diagram",
+    add_diagram: "Add diagram"
   },
 };
 
