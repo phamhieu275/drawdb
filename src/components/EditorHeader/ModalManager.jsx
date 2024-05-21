@@ -10,6 +10,7 @@ import ExportImage from "./Modal/ExportImage";
 import ExportJson from "./Modal/ExportJson";
 import ExportSql from "./Modal/ExportSql";
 import SaveAs from "./Modal/SaveAs";
+import ExportExcel from "./Modal/ExportExcel";
 
 export default function ModalManager({
   modal,
@@ -47,6 +48,8 @@ export default function ModalManager({
       return <SetTableWidth hideModal={hideModal} />;
     case MODAL.LANGUAGE:
       return <Language hideModal={hideModal} />;
+    case MODAL.EXPORT_EXCEL:
+      return <ExportExcel hideModal={hideModal} title={title} />;
     default:
       return <></>;
   }

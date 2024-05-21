@@ -116,6 +116,7 @@ export const MODAL = {
   EXPORT_IMG: 9,
   EXPORT_SQL: 10,
   EXPORT_JSON: 11,
+  EXPORT_EXCEL: 12
 };
 
 export const STATUS = {

@@ -200,6 +200,17 @@ const vi = {
     not_found: "Không tìm thấy",
     export_json: "Xuất json",
     format: "Định dạng",
+    export_excel: "Xuất excel",
+    fields: "Trường",
+    source_table: "Bảng gốc",
+    source_field: "Trường bảng gốc",
+    foreign_table: "Bảng ngoại",
+    foreign_field: "Trường bảng ngoại",
+    update_constraint: "Hạn chế cập nhật",
+    delete_constraint: "Hạn chế xoá",
+    yes: "Có",
+    diagram: "Sơ đồ",
+    add_diagram: "Thêm sơ đồ"
   },
 };
 
