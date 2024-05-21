@@ -760,6 +760,11 @@ export default function ControlPanel({
             },
           },
           {
+            EXCEL: () => {
+              setModal(MODAL.EXPORT_EXCEL);
+            },
+          },
+          {
             DRAWDB: () => {
               const result = JSON.stringify(
                 {
