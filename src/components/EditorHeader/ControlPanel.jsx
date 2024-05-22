@@ -31,7 +31,6 @@ import {
   MODAL,
   SIDESHEET,
 } from "../../data/constants";
-import jsPDF from "jspdf";
 import { useHotkeys } from "react-hotkeys-hook";
 import { Validator } from "jsonschema";
 import { areaSchema, noteSchema, tableSchema } from "../../data/schemas";

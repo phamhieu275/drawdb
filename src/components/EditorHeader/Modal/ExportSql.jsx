@@ -4,7 +4,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { sql } from "@codemirror/lang-sql";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { Select } from "@douyinfe/semi-ui";
+import { Checkbox, Select } from "@douyinfe/semi-ui";
 import { DATABASE_TYPES } from "../../../data/constants";
 import toSQL from "../../../utils/toSQL";
 import { useTables, useSettings, useTypes } from "../../../hooks";
@@ -18,6 +18,7 @@ export default function ExportSql({ title, hideModal }) {
 
   const [options, setOptions] = useState({
     format: DATABASE_TYPES[0],
+    hasRelationship: true,
   });
 
   const [exportData, setExportData] = useState({
@@ -38,7 +39,7 @@ export default function ExportSql({ title, hideModal }) {
     (options) => {
       const rawData = toSQL[`jsonTo${options.format}`]({
         tables: tables,
-        references: relationships,
+        references: options.hasRelationship ? relationships : [],
         types: types,
       });
 
@@ -74,6 +75,15 @@ export default function ExportSql({ title, hideModal }) {
         className="w-full"
         onChange={(value) => changeOptions({ format: value })}
       />
+      <Checkbox
+        className="w-full my-3"
+        aria-label="export relationship checkbox"
+        checked={options.hasRelationship}
+        defaultChecked
+        onChange={(e) => changeOptions({ hasRelationship: e.target.checked })}
+      >
+        {t("add_relationship")}
+      </Checkbox>
       <CodeMirror
         value={exportData.rawData}
         height="360px"
