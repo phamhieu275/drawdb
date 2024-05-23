@@ -198,9 +198,8 @@ const fa = {
     edit_relationship: "{{extra}} ویرایش ارتباط {{refName}}",
     delete_relationship: "حذف ارتباط {{refName}}",
     not_found: "یافت نشد"
-        
+
     },
   };
-  
+
   export { fa,persian };
-  
