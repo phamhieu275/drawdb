@@ -213,6 +213,8 @@ const en = {
     delete_relationship: "Delete relationship {{refName}}",
     not_found: "Not found",
     empty_index_name: "Declared an index with no name in table '{{tableName}}'",
+    export_json: "Export json",
+    format: "Format",
   },
 };
 
