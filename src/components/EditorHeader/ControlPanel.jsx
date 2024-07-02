@@ -54,6 +54,7 @@ import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
 import { useTranslation } from "react-i18next";
 import ModalManager from "./ModalManager";
+import { notifications } from "@mantine/notifications";
 
 export default function ControlPanel({
   diagramId,
@@ -973,11 +974,16 @@ export default function ControlPanel({
         function: async () => {
           db.delete()
             .then(() => {
-              Toast.success(t("storage_flushed"));
+              notifications.show({
+                message: t("storage_flushed"),
+              });
               window.location.reload(false);
             })
             .catch(() => {
-              Toast.error(t("oops_smth_went_wrong"));
+              notifications.show({
+                message: t("oops_smth_went_wrong"),
+                color: "red",
+              });
             });
         },
       },
