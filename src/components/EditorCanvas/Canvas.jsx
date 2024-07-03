@@ -5,7 +5,7 @@ import {
   Constraint,
   ObjectType,
 } from "../../data/constants";
-import { Toast } from "@douyinfe/semi-ui";
+import Toast from "src/components/Toast";
 import Table from "./Table";
 import Area from "./Area";
 import Relationship from "./Relationship";

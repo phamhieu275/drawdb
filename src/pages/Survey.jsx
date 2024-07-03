@@ -4,7 +4,6 @@ import logo_dark from "../assets/logo_dark_160.png";
 import {
   Banner,
   Button,
-  Toast,
   Spin,
   Slider,
   Radio,
@@ -22,6 +21,7 @@ import { Link } from "react-router-dom";
 import RichEditor from "../components/LexicalEditor/RichEditor";
 import axios from "axios";
 import { questions } from "../data/surveyQuestions";
+import Toast from "src/components/Toast";
 
 function SurveyForm({ theme }) {
   const [editor] = useLexicalComposerContext();
@@ -59,9 +59,9 @@ function SurveyForm({ theme }) {
           .post(`${import.meta.env.VITE_BACKEND_URL}/send_email`, {
             subject: `[SURVEY]: ${new Date().toDateString()}`,
             message: `${Object.keys(form).map(
-              (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`
+              (k) => `<div>${questions[k]}</div><div>${form[k]}</div>`,
             )}<div>How can we make drawDB a better experience for you?</div>${$generateHtmlFromNodes(
-              editor
+              editor,
             )}`,
           })
           .then(() => {

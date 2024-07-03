@@ -1,4 +1,4 @@
-import { Banner, Toast } from "@douyinfe/semi-ui";
+import { Banner } from "@douyinfe/semi-ui";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import {
   useUndoRedo,
 } from "../../../hooks";
 import BaseModal from "./BaseModal";
+import Toast from "src/components/Toast";
 
 export default function Open({ hideModal, setDiagramId, setTitle }) {
   const { t } = useTranslation();

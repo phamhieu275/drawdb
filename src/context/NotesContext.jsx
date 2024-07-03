@@ -3,7 +3,7 @@ import useTransform from "../hooks/useTransform";
 import { Action, ObjectType, defaultNoteTheme } from "../data/constants";
 import useUndoRedo from "../hooks/useUndoRedo";
 import useSelect from "../hooks/useSelect";
-import { Toast } from "@douyinfe/semi-ui";
+import Toast from "src/components/Toast";
 import { useTranslation } from "react-i18next";
 
 export const NotesContext = createContext(null);

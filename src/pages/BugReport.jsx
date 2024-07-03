@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import logo_light from "../assets/logo_light_160.png";
 import logo_dark from "../assets/logo_dark_160.png";
-import { Banner, Button, Input, Upload, Toast, Spin } from "@douyinfe/semi-ui";
+import { Banner, Button, Input, Upload, Spin } from "@douyinfe/semi-ui";
 import {
   IconSun,
   IconMoon,
@@ -16,6 +16,7 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { CLEAR_EDITOR_COMMAND } from "lexical";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Toast from "src/components/Toast";
 
 function Form({ theme }) {
   const [editor] = useLexicalComposerContext();

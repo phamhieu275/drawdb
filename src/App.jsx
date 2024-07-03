@@ -22,7 +22,7 @@ const theme = createTheme({
 export default function App() {
   return (
     <MantineProvider theme={theme}>
-      <Notifications position="top-center" autoClose={5000} />
+      <Notifications position="top-center" />
       <SettingsContextProvider>
         <BrowserRouter>
           <RestoreScroll />

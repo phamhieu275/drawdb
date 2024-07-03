@@ -18,11 +18,9 @@ import {
   InputNumber,
   Tooltip,
   Spin,
-  Toast,
   Popconfirm,
 } from "@douyinfe/semi-ui";
-import { toPng, toJpeg } from "html-to-image";
-import { saveAs } from "file-saver";
+import { toPng } from "html-to-image";
 import {
   ObjectType,
   Action,
@@ -54,7 +52,7 @@ import LayoutDropdown from "./LayoutDropdown";
 import Sidesheet from "./SideSheet/Sidesheet";
 import { useTranslation } from "react-i18next";
 import ModalManager from "./ModalManager";
-import { notifications } from "@mantine/notifications";
+import Toast from "src/components/Toast";
 
 export default function ControlPanel({
   diagramId,
@@ -974,16 +972,11 @@ export default function ControlPanel({
         function: async () => {
           db.delete()
             .then(() => {
-              notifications.show({
-                message: t("storage_flushed"),
-              });
-              window.location.reload(false);
+              Toast.success(t("storage_flushed"));
+              setTimeout(() => window.location.reload(false), 1000);
             })
             .catch(() => {
-              notifications.show({
-                message: t("oops_smth_went_wrong"),
-                color: "red",
-              });
+              Toast.error(t("oops_smth_went_wrong"));
             });
         },
       },
