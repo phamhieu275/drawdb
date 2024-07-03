@@ -225,7 +225,9 @@ const en = {
     delete_constraint: "Delete constraint",
     yes: "Yes",
     diagram: "Diagram",
-    add_diagram: "Add diagram"
+    add_diagram: "Add diagram",
+    export_pdf: "Export pdf",
+    export_diagram: "Export diagram",
   },
 };
 

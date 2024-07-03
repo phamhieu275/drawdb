@@ -733,22 +733,7 @@ export default function ControlPanel({
           },
           {
             PDF: () => {
-              const canvas = document.getElementById("canvas");
-              toJpeg(canvas).then(function (dataUrl) {
-                const doc = new jsPDF("l", "px", [
-                  canvas.offsetWidth,
-                  canvas.offsetHeight,
-                ]);
-                doc.addImage(
-                  dataUrl,
-                  "jpeg",
-                  0,
-                  0,
-                  canvas.offsetWidth,
-                  canvas.offsetHeight,
-                );
-                doc.save(`${title}_${new Date().toISOString()}.pdf`);
-              });
+              setModal(MODAL.EXPORT_PDF);
             },
           },
           {
@@ -768,24 +753,7 @@ export default function ControlPanel({
           },
           {
             DRAWDB: () => {
-              const result = JSON.stringify(
-                {
-                  author: "Unnamed",
-                  title: title,
-                  date: new Date().toISOString(),
-                  tables: tables,
-                  relationships: relationships,
-                  notes: notes,
-                  subjectAreas: areas,
-                  types: types,
-                },
-                null,
-                2,
-              );
-              const blob = new Blob([result], {
-                type: "text/plain;charset=utf-8",
-              });
-              saveAs(blob, `${title}_${new Date().toISOString()}.ddb`);
+              setModal(MODAL.EXPORT_DIAGRAM);
             },
           },
         ],
