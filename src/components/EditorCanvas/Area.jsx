@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Button, Popover, Input } from "@douyinfe/semi-ui";
-import { IconEdit, IconDeleteStroked } from "@douyinfe/semi-icons";
 import {
   Tab,
   Action,
@@ -19,6 +17,8 @@ import {
 } from "../../hooks";
 import ColorPalette from "../ColorPicker";
 import { useTranslation } from "react-i18next";
+import { ActionIcon, Button, Popover, TextInput } from "@mantine/core";
+import { IconPencil, IconTrash } from "@tabler/icons-react";
 
 export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
   const [hovered, setHovered] = useState(false);
@@ -116,23 +116,21 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
               </div>
               {(hovered || (areaIsSelected() && !layout.sidebar)) && (
                 <Popover
-                  visible={areaIsSelected() && !layout.sidebar}
-                  onClickOutSide={onClickOutSide}
-                  stopPropagation
-                  content={<EditPopoverContent data={data} />}
-                  trigger="custom"
-                  position="rightTop"
-                  showArrow
+                  position="right-start"
+                  withArrow
+                  opened={areaIsSelected() && !layout.sidebar}
+                  onClose={onClickOutSide}
+                  closeOnClickOutside={false}
                 >
-                  <Button
-                    icon={<IconEdit />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
-                    onClick={edit}
-                  />
+                  <Popover.Target>
+                    <ActionIcon variant="filled" color="blue" onClick={edit}>
+                      <IconPencil />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <EditPopoverContent data={data} />
+                    <input type="text" />
+                  </Popover.Dropdown>
                 </Popover>
               )}
             </div>
@@ -195,10 +193,11 @@ function EditPopoverContent({ data }) {
   const { t } = useTranslation();
 
   return (
-    <div className="popover-theme">
+    <>
       <div className="font-semibold mb-2 ms-1">{t("edit")}</div>
       <div className="w-[280px] flex items-center mb-2">
-        <Input
+        <input value={data.name} type="text" />
+        <TextInput
           value={data.name}
           placeholder={t("name")}
           className="me-2"
@@ -223,59 +222,57 @@ function EditPopoverContent({ data }) {
             setRedoStack([]);
           }}
         />
-        <Popover
-          content={
-            <div className="popover-theme">
-              <ColorPalette
-                currentColor={data.color}
-                onPickColor={(c) => {
-                  setUndoStack((prev) => [
-                    ...prev,
-                    {
-                      action: Action.EDIT,
-                      element: ObjectType.AREA,
-                      aid: data.id,
-                      undo: { color: data.color },
-                      redo: { color: c },
-                      message: t("edit_area", {
-                        areaName: data.name,
-                        extra: "[color]",
-                      }),
-                    },
-                  ]);
-                  setRedoStack([]);
-                  updateArea(data.id, {
-                    color: c,
-                  });
-                }}
-                onClearColor={() => {
-                  updateArea(data.id, {
-                    color: defaultBlue,
-                  });
-                  setSaveState(State.SAVING);
-                }}
-              />
-            </div>
-          }
-          position="rightTop"
-          showArrow
-        >
-          <div
-            className="h-[32px] w-[32px] rounded"
-            style={{ backgroundColor: data.color }}
-          />
+        <Popover position="right-start" withArrow>
+          <Popover.Target>
+            <div
+              className="h-[32px] w-[32px] rounded"
+              style={{ backgroundColor: data.color }}
+            ></div>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <ColorPalette
+              currentColor={data.color}
+              onPickColor={(c) => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.AREA,
+                    aid: data.id,
+                    undo: { color: data.color },
+                    redo: { color: c },
+                    message: t("edit_area", {
+                      areaName: data.name,
+                      extra: "[color]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+                updateArea(data.id, {
+                  color: c,
+                });
+              }}
+              onClearColor={() => {
+                updateArea(data.id, {
+                  color: defaultBlue,
+                });
+                setSaveState(State.SAVING);
+              }}
+            />
+          </Popover.Dropdown>
         </Popover>
       </div>
       <div className="flex">
         <Button
-          icon={<IconDeleteStroked />}
-          type="danger"
-          block
+          leftSection={<IconTrash />}
+          variant="filled"
+          color="red"
           onClick={() => deleteArea(data.id, true)}
+          fullWidth
         >
           {t("delete")}
         </Button>
       </div>
-    </div>
+    </>
   );
 }
