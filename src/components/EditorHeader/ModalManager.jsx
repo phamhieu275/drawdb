@@ -11,6 +11,8 @@ import ExportJson from "./Modal/ExportJson";
 import ExportSql from "./Modal/ExportSql";
 import SaveAs from "./Modal/SaveAs";
 import ExportExcel from "./Modal/ExportExcel";
+import ExportPdf from "./Modal/ExportPdf";
+import ExportDrawDB from "./Modal/ExportDrawDB";
 
 export default function ModalManager({
   modal,
@@ -22,10 +24,14 @@ export default function ModalManager({
   switch (modal) {
     case MODAL.EXPORT_IMG:
       return <ExportImage hideModal={hideModal} title={title} />;
+    case MODAL.EXPORT_PDF:
+      return <ExportPdf hideModal={hideModal} title={title} />;
     case MODAL.EXPORT_SQL:
       return <ExportSql hideModal={hideModal} title={title} />;
     case MODAL.EXPORT_JSON:
       return <ExportJson hideModal={hideModal} title={title} />;
+    case MODAL.EXPORT_DIAGRAM:
+      return <ExportDrawDB hideModal={hideModal} title={title} />;
     case MODAL.IMPORT_DIAGRAM:
       return <ImportDiagram hideModal={hideModal} setTitle={setTitle} />;
     case MODAL.IMPORT_SRC:
