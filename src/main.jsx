@@ -8,8 +8,8 @@ import "./i18n/i18n.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <LocaleProvider locale={en_US}>
+  <>
     <App />
     <Analytics />
-  </LocaleProvider>,
+  </>
 );

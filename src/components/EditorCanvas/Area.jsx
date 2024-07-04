@@ -118,18 +118,17 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
                 <Popover
                   position="right-start"
                   withArrow
+                  arrowSize={10}
                   opened={areaIsSelected() && !layout.sidebar}
                   onClose={onClickOutSide}
-                  closeOnClickOutside={false}
                 >
                   <Popover.Target>
                     <ActionIcon variant="filled" color="blue" onClick={edit}>
                       <IconPencil />
                     </ActionIcon>
                   </Popover.Target>
-                  <Popover.Dropdown>
+                  <Popover.Dropdown onMouseDown={(e) => e.stopPropagation()} onMouseOver={(e) => e.stopPropagation()}>
                     <EditPopoverContent data={data} />
-                    <input type="text" />
                   </Popover.Dropdown>
                 </Popover>
               )}
@@ -196,12 +195,11 @@ function EditPopoverContent({ data }) {
     <>
       <div className="font-semibold mb-2 ms-1">{t("edit")}</div>
       <div className="w-[280px] flex items-center mb-2">
-        <input value={data.name} type="text" />
         <TextInput
           value={data.name}
           placeholder={t("name")}
           className="me-2"
-          onChange={(value) => updateArea(data.id, { name: value })}
+          onChange={(e) => updateArea(data.id, { name: e.target.value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
