@@ -7,16 +7,24 @@ import {
   tableColorStripHeight,
 } from "../../data/constants";
 import {
-  IconEdit,
-  IconMore,
+  IconPencil,
+  IconDots,
   IconMinus,
-  IconDeleteStroked,
-  IconKeyStroked,
-} from "@douyinfe/semi-icons";
-import { Popover, Tag, Button, SideSheet } from "@douyinfe/semi-ui";
+  IconTrash,
+  IconKey,
+} from "@tabler/icons-react";
 import { useLayout, useSettings, useTables, useSelect } from "../../hooks";
 import TableInfo from "../EditorSidePanel/TablesTab/TableInfo";
 import { useTranslation } from "react-i18next";
+import {
+  ActionIcon,
+  Popover,
+  Drawer,
+  Badge,
+  Button,
+  Pill,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
@@ -32,6 +40,8 @@ export default function Table(props) {
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
+  const [openedFieldDetail, { closeFieldDetail, openFieldDetail }] =
+    useDisclosure(false);
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
@@ -97,87 +107,78 @@ export default function Table(props) {
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2">
-                <Button
-                  icon={<IconEdit />}
-                  size="small"
-                  theme="solid"
-                  style={{
-                    backgroundColor: "#2f68adb3",
-                    marginRight: "6px",
-                  }}
-                  onClick={openEditor}
-                />
+                <ActionIcon variant="fill" onClick={openEditor}>
+                  <IconPencil />
+                </ActionIcon>
                 <Popover
                   key={tableData.key}
-                  content={
-                    <div className="popover-theme">
-                      <div className="mb-2">
-                        <strong>{t("comment")}:</strong>{" "}
-                        {tableData.comment === "" ? (
-                          t("not_set")
-                        ) : (
-                          <div>{tableData.comment}</div>
-                        )}
-                      </div>
-                      <div>
-                        <strong
-                          className={`${
-                            tableData.indices.length === 0 ? "" : "block"
-                          }`}
-                        >
-                          {t("indices")}:
-                        </strong>{" "}
-                        {tableData.indices.length === 0 ? (
-                          t("not_set")
-                        ) : (
-                          <div>
-                            {tableData.indices.map((index, k) => (
-                              <div
-                                key={k}
-                                className={`flex items-center my-1 px-2 py-1 rounded ${
-                                  settings.mode === "light"
-                                    ? "bg-gray-100"
-                                    : "bg-zinc-800"
-                                }`}
-                              >
-                                <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
-                                <div>
-                                  {index.fields.map((f) => (
-                                    <Tag color="blue" key={f} className="me-1">
-                                      {f}
-                                    </Tag>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <Button
-                        icon={<IconDeleteStroked />}
-                        type="danger"
-                        block
-                        style={{ marginTop: "8px" }}
-                        onClick={() => deleteTable(tableData.id)}
-                      >
-                        {t("delete")}
-                      </Button>
-                    </div>
-                  }
-                  position="rightTop"
-                  showArrow
-                  trigger="click"
-                  style={{ width: "200px", wordBreak: "break-word" }}
+                  position="top-start"
+                  withArrow
+                  // style={{ width: "200px", wordBreak: "break-word" }}
                 >
-                  <Button
-                    icon={<IconMore />}
-                    type="tertiary"
-                    size="small"
-                    style={{
-                      backgroundColor: "#808080b3",
-                      color: "white",
-                    }}
-                  />
+                  <Popover.Target>
+                    <ActionIcon variant="fill">
+                      <IconDots />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <div className="mb-2">
+                      <strong>{t("comment")}:</strong>{" "}
+                      {tableData.comment === "" ? (
+                        t("not_set")
+                      ) : (
+                        <div>{tableData.comment}</div>
+                      )}
+                    </div>
+                    <div>
+                      <strong
+                        className={`${
+                          tableData.indices.length === 0 ? "" : "block"
+                        }`}
+                      >
+                        {t("indices")}:
+                      </strong>{" "}
+                      {tableData.indices.length === 0 ? (
+                        t("not_set")
+                      ) : (
+                        <div>
+                          {tableData.indices.map((index, k) => (
+                            <div
+                              key={k}
+                              className={`flex items-center my-1 px-2 py-1 rounded ${
+                                settings.mode === "light"
+                                  ? "bg-gray-100"
+                                  : "bg-zinc-800"
+                              }`}
+                            >
+                              <i className="fa-solid fa-thumbtack me-2 mt-1 text-slate-500"></i>
+                              <div>
+                                {index.fields.map((f) => (
+                                  <Pill
+                                    color="blue"
+                                    key={f}
+                                    className="me-1"
+                                    withRemoveButton
+                                  >
+                                    {f}
+                                  </Pill>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      leftSection={<IconTrash />}
+                      color="red"
+                      fullWidth
+                      style={{ marginTop: "8px" }}
+                      onClick={() => deleteTable(tableData.id)}
+                    >
+                      {t("delete")}
+                    </Button>
+                  </Popover.Dropdown>
                 </Popover>
               </div>
             </div>
@@ -186,47 +187,51 @@ export default function Table(props) {
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
-                content={
-                  <div className="popover-theme">
-                    <div className="flex justify-between items-center pb-2">
-                      <p className="me-4 font-bold">{e.name}</p>
-                      <p className="ms-4">{e.type}</p>
-                    </div>
-                    <hr />
-                    {e.primary && (
-                      <Tag color="blue" className="me-2 my-2">
-                        {t("primary")}
-                      </Tag>
-                    )}
-                    {e.unique && (
-                      <Tag color="amber" className="me-2 my-2">
-                        {t("unique")}
-                      </Tag>
-                    )}
-                    {e.notNull && (
-                      <Tag color="purple" className="me-2 my-2">
-                        {t("not_null")}
-                      </Tag>
-                    )}
-                    {e.increment && (
-                      <Tag color="green" className="me-2 my-2">
-                        {t("autoincrement")}
-                      </Tag>
-                    )}
-                    <p>
-                      <strong>{t("default_value")}: </strong>
-                      {e.default === "" ? t("not_set") : e.default}
-                    </p>
-                    <p>
-                      <strong>{t("comment")}: </strong>
-                      {e.comment === "" ? t("not_set") : e.comment}
-                    </p>
-                  </div>
-                }
-                position="right"
-                showArrow
+                position="top-start"
+                withArrow
+                opened={openedFieldDetail}
               >
-                {field(e, i)}
+                <Popover.Target
+                  onMouseEnter={openFieldDetail}
+                  onMouseLeave={closeFieldDetail}
+                >
+                  {field(e, i)}
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <div className="flex justify-between items-center pb-2">
+                    <p className="me-4 font-bold">{e.name}</p>
+                    <p className="ms-4">{e.type}</p>
+                  </div>
+                  <hr />
+                  {e.primary && (
+                    <Badge color="blue" className="me-2 my-2">
+                      {t("primary")}
+                    </Badge>
+                  )}
+                  {e.unique && (
+                    <Badge color="amber" className="me-2 my-2">
+                      {t("unique")}
+                    </Badge>
+                  )}
+                  {e.notNull && (
+                    <Badge color="purple" className="me-2 my-2">
+                      {t("not_null")}
+                    </Badge>
+                  )}
+                  {e.increment && (
+                    <Badge color="green" className="me-2 my-2">
+                      {t("autoincrement")}
+                    </Badge>
+                  )}
+                  <p>
+                    <strong>{t("default_value")}: </strong>
+                    {e.default === "" ? t("not_set") : e.default}
+                  </p>
+                  <p>
+                    <strong>{t("comment")}: </strong>
+                    {e.comment === "" ? t("not_set") : e.comment}
+                  </p>
+                </Popover.Dropdown>
               </Popover>
             ) : (
               field(e, i)
@@ -234,16 +239,16 @@ export default function Table(props) {
           })}
         </div>
       </foreignObject>
-      <SideSheet
+      <Drawer
+        position="right"
         title={t("edit")}
-        size="small"
-        visible={
+        opened={
           selectedElement.element === ObjectType.TABLE &&
           selectedElement.id === tableData.id &&
           selectedElement.open &&
           !layout.sidebar
         }
-        onCancel={() =>
+        onClose={() =>
           setSelectedElement((prev) => ({
             ...prev,
             open: !prev.open,
@@ -254,7 +259,7 @@ export default function Table(props) {
         <div className="sidesheet-theme">
           <TableInfo data={tableData} />
         </div>
-      </SideSheet>
+      </Drawer>
     </>
   );
 
@@ -313,18 +318,16 @@ export default function Table(props) {
         </div>
         <div className="text-zinc-400">
           {hoveredField === index ? (
-            <Button
-              theme="solid"
-              size="small"
-              style={{
-                backgroundColor: "#d42020b3",
-              }}
-              icon={<IconMinus />}
+            <ActionIcon
+              variant="filled"
+              color="red"
               onClick={() => deleteField(fieldData, tableData.id)}
-            />
+            >
+              <IconMinus />
+            </ActionIcon>
           ) : (
             <div className="flex gap-1 items-center">
-              {fieldData.primary && <IconKeyStroked />}
+              {fieldData.primary && <IconKey />}
               <span>{fieldData.type}</span>
             </div>
           )}

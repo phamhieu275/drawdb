@@ -6,12 +6,8 @@ import {
   State,
   noteThemes,
 } from "../../data/constants";
-import { Input, Button, Popover } from "@douyinfe/semi-ui";
-import {
-  IconEdit,
-  IconDeleteStroked,
-  IconCheckboxTick,
-} from "@douyinfe/semi-icons";
+import { TextInput, Button, ActionIcon, Popover } from "@mantine/core";
+import { IconCheck, IconPencil, IconTrash } from "@tabler/icons-react";
 import {
   useLayout,
   useUndoRedo,
@@ -150,13 +146,13 @@ export default function Note({ data, onMouseDown }) {
                 !layout.sidebar)) && (
               <div>
                 <Popover
-                  visible={
+                  opened={
                     selectedElement.element === ObjectType.NOTE &&
                     selectedElement.id === data.id &&
                     selectedElement.open &&
                     !layout.sidebar
                   }
-                  onClickOutSide={() => {
+                  onClose={() => {
                     if (selectedElement.editFromToolbar) {
                       setSelectedElement((prev) => ({
                         ...prev,
@@ -170,17 +166,28 @@ export default function Note({ data, onMouseDown }) {
                     }));
                     setSaveState(State.SAVING);
                   }}
-                  stopPropagation
-                  content={
+                  position="right-start"
+                  withArrow
+                >
+                  <Popover.Target>
+                    <ActionIcon variant="filled" color="blue" onClick={edit}>
+                      <IconPencil />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <div className="popover-theme">
                       <div className="font-semibold mb-2 ms-1">{t("edit")}</div>
                       <div className="w-[280px] flex items-center mb-2">
-                        <Input
+                        <TextInput
                           value={data.title}
                           placeholder={t("title")}
                           className="me-2"
-                          onChange={(value) =>
-                            updateNote(data.id, { title: value })
+                          onChange={(e) =>
+                            updateNote(data.id, { title: e.target.value })
                           }
                           onFocus={(e) =>
                             setEditField({ title: e.target.value })
@@ -204,8 +211,14 @@ export default function Note({ data, onMouseDown }) {
                             setRedoStack([]);
                           }}
                         />
-                        <Popover
-                          content={
+                        <Popover position="right-start" withArrow>
+                          <Popover.Target>
+                            <div
+                              className="h-[32px] w-[32px] rounded"
+                              style={{ backgroundColor: data.color }}
+                            />
+                          </Popover.Target>
+                          <Popover.Dropdown>
                             <div className="popover-theme">
                               <div className="font-medium mb-1">
                                 {t("theme")}
@@ -213,7 +226,7 @@ export default function Note({ data, onMouseDown }) {
                               <hr />
                               <div className="py-3">
                                 {noteThemes.map((c) => (
-                                  <button
+                                  <ActionIcon
                                     key={c}
                                     style={{ backgroundColor: c }}
                                     className="p-3 rounded-full mx-1"
@@ -237,51 +250,29 @@ export default function Note({ data, onMouseDown }) {
                                     }}
                                   >
                                     {data.color === c ? (
-                                      <IconCheckboxTick
-                                        style={{ color: "white" }}
-                                      />
+                                      <IconCheck style={{ color: "white" }} />
                                     ) : (
-                                      <IconCheckboxTick style={{ color: c }} />
+                                      <IconCheck style={{ color: c }} />
                                     )}
-                                  </button>
+                                  </ActionIcon>
                                 ))}
                               </div>
                             </div>
-                          }
-                          position="rightTop"
-                          showArrow
-                        >
-                          <div
-                            className="h-[32px] w-[32px] rounded"
-                            style={{ backgroundColor: data.color }}
-                          />
+                          </Popover.Dropdown>
                         </Popover>
                       </div>
                       <div className="flex">
                         <Button
-                          icon={<IconDeleteStroked />}
-                          type="danger"
-                          block
+                          leftSection={<IconTrash />}
+                          color="red"
+                          fullWidth
                           onClick={() => deleteNote(data.id, true)}
                         >
                           {t("delete")}
                         </Button>
                       </div>
                     </div>
-                  }
-                  trigger="custom"
-                  position="rightTop"
-                  showArrow
-                >
-                  <Button
-                    icon={<IconEdit />}
-                    size="small"
-                    theme="solid"
-                    style={{
-                      backgroundColor: "#2F68ADB3",
-                    }}
-                    onClick={edit}
-                  />
+                  </Popover.Dropdown>
                 </Popover>
               </div>
             )}

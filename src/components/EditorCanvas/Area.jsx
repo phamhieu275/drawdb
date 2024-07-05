@@ -127,7 +127,11 @@ export default function Area({ data, onMouseDown, setResize, setInitCoords }) {
                       <IconPencil />
                     </ActionIcon>
                   </Popover.Target>
-                  <Popover.Dropdown onMouseDown={(e) => e.stopPropagation()} onMouseOver={(e) => e.stopPropagation()}>
+                  <Popover.Dropdown
+                    onMouseDown={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <EditPopoverContent data={data} />
                   </Popover.Dropdown>
                 </Popover>
