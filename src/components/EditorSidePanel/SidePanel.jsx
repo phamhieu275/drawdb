@@ -1,5 +1,5 @@
-import { Tabs, TabPane } from "@douyinfe/semi-ui";
-import { Tab } from "../../data/constants";
+import { Tabs } from "@mantine/core";
+import { Tab as TabIndex } from "../../data/constants";
 import { useLayout, useSelect } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
 import TypesTab from "./TypesTab/TypesTab";
@@ -15,15 +15,19 @@ export default function SidePanel({ width, resize, setResize }) {
   const { t } = useTranslation();
 
   const tabList = [
-    { tab: t("tables"), itemKey: Tab.TABLES, component: <TablesTab /> },
+    { label: t("tables"), itemKey: TabIndex.TABLES, component: <TablesTab /> },
     {
-      tab: t("relationships"),
-      itemKey: Tab.RELATIONSHIPS,
+      label: t("relationships"),
+      itemKey: TabIndex.RELATIONSHIPS,
       component: <RelationshipsTab />,
     },
-    { tab: t("subject_areas"), itemKey: Tab.AREAS, component: <AreasTab /> },
-    { tab: t("notes"), itemKey: Tab.NOTES, component: <NotesTab /> },
-    { tab: t("types"), itemKey: Tab.TYPES, component: <TypesTab /> },
+    {
+      label: t("subject_areas"),
+      itemKey: TabIndex.AREAS,
+      component: <AreasTab />,
+    },
+    { label: t("notes"), itemKey: TabIndex.NOTES, component: <NotesTab /> },
+    { label: t("types"), itemKey: TabIndex.TYPES, component: <TypesTab /> },
   ];
 
   return (
@@ -34,20 +38,25 @@ export default function SidePanel({ width, resize, setResize }) {
       >
         <div className="h-full flex-1 overflow-y-auto">
           <Tabs
-            type="card"
-            activeKey={selectedElement.currentTab}
-            lazyRender
+            // orientation="vertical"
+            defaultValue={selectedElement.currentTab || `${TabIndex.TABLES}`}
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }
-            collapsible
           >
-            {tabList.length &&
-              tabList.map((tab) => (
-                <TabPane tab={tab.tab} itemKey={tab.itemKey} key={tab.itemKey}>
-                  <div className="p-2">{tab.component}</div>
-                </TabPane>
+            <Tabs.List>
+              {tabList.map((tab, idx) => (
+                <Tabs.Tab value={tab.label} key={idx}>
+                  {tab.label}
+                </Tabs.Tab>
               ))}
+            </Tabs.List>
+
+            {tabList.map((tab, idx) => (
+              <Tabs.Panel value={tab.label} key={idx}>
+                <div className="p-2">{tab.component}</div>
+              </Tabs.Panel>
+            ))}
           </Tabs>
         </div>
         {layout.issues && (

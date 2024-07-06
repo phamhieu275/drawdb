@@ -1,4 +1,4 @@
-import { Collapse, Button } from "@douyinfe/semi-ui";
+import { Button, Accordion } from "@mantine/core";
 import { IconPlus } from "@douyinfe/semi-icons";
 import { useSelect, useTables } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
@@ -17,7 +17,11 @@ export default function TablesTab() {
       <div className="flex gap-2">
         <SearchBar tables={tables} />
         <div>
-          <Button icon={<IconPlus />} block onClick={() => addTable()}>
+          <Button
+            leftSection={<IconPlus />}
+            fullWidth
+            onClick={() => addTable()}
+          >
             {t("add_table")}
           </Button>
         </div>
@@ -25,14 +29,12 @@ export default function TablesTab() {
       {tables.length === 0 ? (
         <Empty title={t("no_tables")} text={t("no_tables_text")} />
       ) : (
-        <Collapse
-          activeKey={
+        <Accordion
+          defaultValue={
             selectedElement.open && selectedElement.element === ObjectType.TABLE
               ? `${selectedElement.id}`
               : ""
           }
-          keepDOM
-          lazyRender
           onChange={(k) =>
             setSelectedElement((prev) => ({
               ...prev,
@@ -41,30 +43,28 @@ export default function TablesTab() {
               element: ObjectType.TABLE,
             }))
           }
-          accordion
         >
-          {tables.map((t) => (
-            <div id={`scroll_table_${t.id}`} key={t.id}>
-              <Collapse.Panel
-                className="relative"
-                header={
-                  <>
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-                      {t.name}
-                    </div>
-                    <div
-                      className="w-1 h-full absolute top-0 left-0 bottom-0"
-                      style={{ backgroundColor: t.color }}
-                    />
-                  </>
-                }
-                itemKey={`${t.id}`}
-              >
-                <TableInfo data={t} />
-              </Collapse.Panel>
-            </div>
+          {tables.map((table) => (
+            <Accordion.Item
+              key={table.key}
+              value={`${table.id}`}
+              className="relative"
+            >
+              <Accordion.Control>
+                <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {table.name}
+                </div>
+                <div
+                  className="w-1 h-full absolute top-0 left-0 bottom-0"
+                  style={{ backgroundColor: table.color }}
+                />
+              </Accordion.Control>
+              <Accordion.Panel>
+                <TableInfo data={table} />
+              </Accordion.Panel>
+            </Accordion.Item>
           ))}
-        </Collapse>
+        </Accordion>
       )}
     </>
   );

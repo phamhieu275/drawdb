@@ -71,11 +71,11 @@ export const Constraint = {
 };
 
 export const Tab = {
-  TABLES: "1",
-  RELATIONSHIPS: "2",
-  AREAS: "3",
-  NOTES: "4",
-  TYPES: "5",
+  TABLES: 1,
+  RELATIONSHIPS: 2,
+  AREAS: 3,
+  NOTES: 4,
+  TYPES: 5,
 };
 
 export const ObjectType = {

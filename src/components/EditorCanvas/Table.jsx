@@ -24,7 +24,6 @@ import {
   Button,
   Pill,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 
 export default function Table(props) {
   const [hoveredField, setHoveredField] = useState(-1);
@@ -40,8 +39,6 @@ export default function Table(props) {
   const { settings } = useSettings();
   const { t } = useTranslation();
   const { selectedElement, setSelectedElement } = useSelect();
-  const [openedFieldDetail, { closeFieldDetail, openFieldDetail }] =
-    useDisclosure(false);
 
   const height =
     tableData.fields.length * tableFieldHeight + tableHeaderHeight + 7;
@@ -107,17 +104,16 @@ export default function Table(props) {
             </div>
             <div className="hidden group-hover:block">
               <div className="flex justify-end items-center mx-2">
-                <ActionIcon variant="fill" onClick={openEditor}>
+                <ActionIcon
+                  variant="fill"
+                  onClick={openEditor}
+                  className="mr-1"
+                >
                   <IconPencil />
                 </ActionIcon>
-                <Popover
-                  key={tableData.key}
-                  position="top-start"
-                  withArrow
-                  // style={{ width: "200px", wordBreak: "break-word" }}
-                >
+                <Popover key={tableData.key} position="right-start" withArrow>
                   <Popover.Target>
-                    <ActionIcon variant="fill">
+                    <ActionIcon variant="filled" color="#ADB5BD">
                       <IconDots />
                     </ActionIcon>
                   </Popover.Target>
@@ -187,15 +183,17 @@ export default function Table(props) {
             return settings.showFieldSummary ? (
               <Popover
                 key={i}
-                position="top-start"
+                position="right-center"
                 withArrow
-                opened={openedFieldDetail}
+                opened={hoveredField === i}
               >
-                <Popover.Target
-                  onMouseEnter={openFieldDetail}
-                  onMouseLeave={closeFieldDetail}
-                >
-                  {field(e, i)}
+                <Popover.Target>
+                  <div
+                    onMouseEnter={() => setHoveredField(i)}
+                    onMouseLeave={() => setHoveredField(-1)}
+                  >
+                    {field(e, i)}
+                  </div>
                 </Popover.Target>
                 <Popover.Dropdown>
                   <div className="flex justify-between items-center pb-2">
@@ -204,22 +202,42 @@ export default function Table(props) {
                   </div>
                   <hr />
                   {e.primary && (
-                    <Badge color="blue" className="me-2 my-2">
+                    <Badge
+                      color="blue"
+                      size="sm"
+                      radius="sm"
+                      className="me-2 my-2"
+                    >
                       {t("primary")}
                     </Badge>
                   )}
                   {e.unique && (
-                    <Badge color="amber" className="me-2 my-2">
+                    <Badge
+                      color="yellow"
+                      size="sm"
+                      radius="sm"
+                      className="me-2 my-2"
+                    >
                       {t("unique")}
                     </Badge>
                   )}
                   {e.notNull && (
-                    <Badge color="purple" className="me-2 my-2">
+                    <Badge
+                      color="grape"
+                      size="sm"
+                      radius="sm"
+                      className="me-2 my-2"
+                    >
                       {t("not_null")}
                     </Badge>
                   )}
                   {e.increment && (
-                    <Badge color="green" className="me-2 my-2">
+                    <Badge
+                      color="lime"
+                      size="sm"
+                      radius="sm"
+                      className="me-2 my-2"
+                    >
                       {t("autoincrement")}
                     </Badge>
                   )}
