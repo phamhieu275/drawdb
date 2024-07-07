@@ -11,6 +11,7 @@ import useSettings from "./hooks/useSettings";
 import NotFound from "./pages/NotFound";
 import { createTheme, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
@@ -32,7 +33,9 @@ export default function App() {
               path="/editor"
               element={
                 <ThemedPage>
-                  <Editor />
+                  <ModalsProvider>
+                    <Editor />
+                  </ModalsProvider>
                 </ThemedPage>
               }
             />

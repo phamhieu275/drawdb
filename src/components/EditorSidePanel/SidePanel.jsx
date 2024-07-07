@@ -1,4 +1,4 @@
-import { Tabs } from "@mantine/core";
+import { Tabs, Tooltip } from "@mantine/core";
 import { Tab as TabIndex } from "../../data/constants";
 import { useLayout, useSelect } from "../../hooks";
 import RelationshipsTab from "./RelationshipsTab/RelationshipsTab";
@@ -8,6 +8,13 @@ import AreasTab from "./AreasTab/AreasTab";
 import NotesTab from "./NotesTab/NotesTab";
 import TablesTab from "./TablesTab/TablesTab";
 import { useTranslation } from "react-i18next";
+import {
+  IconTableFilled,
+  IconJumpRope,
+  IconNote,
+  IconSquare,
+  IconCategoryPlus,
+} from "@tabler/icons-react";
 
 export default function SidePanel({ width, resize, setResize }) {
   const { layout } = useLayout();
@@ -15,19 +22,36 @@ export default function SidePanel({ width, resize, setResize }) {
   const { t } = useTranslation();
 
   const tabList = [
-    { label: t("tables"), itemKey: TabIndex.TABLES, component: <TablesTab /> },
+    {
+      label: t("tables"),
+      icon: <IconTableFilled />,
+      itemKey: TabIndex.TABLES,
+      component: <TablesTab />,
+    },
     {
       label: t("relationships"),
+      icon: <IconJumpRope />,
       itemKey: TabIndex.RELATIONSHIPS,
       component: <RelationshipsTab />,
     },
     {
       label: t("subject_areas"),
+      icon: <IconSquare />,
       itemKey: TabIndex.AREAS,
       component: <AreasTab />,
     },
-    { label: t("notes"), itemKey: TabIndex.NOTES, component: <NotesTab /> },
-    { label: t("types"), itemKey: TabIndex.TYPES, component: <TypesTab /> },
+    {
+      label: t("notes"),
+      icon: <IconNote />,
+      itemKey: TabIndex.NOTES,
+      component: <NotesTab />,
+    },
+    {
+      label: t("types"),
+      icon: <IconCategoryPlus />,
+      itemKey: TabIndex.TYPES,
+      component: <TypesTab />,
+    },
   ];
 
   return (
@@ -38,22 +62,24 @@ export default function SidePanel({ width, resize, setResize }) {
       >
         <div className="h-full flex-1 overflow-y-auto">
           <Tabs
-            // orientation="vertical"
-            defaultValue={selectedElement.currentTab || `${TabIndex.TABLES}`}
+            orientation="vertical"
+            value={selectedElement.currentTab || `${TabIndex.TABLES}`}
+            defaultValue={`${TabIndex.TABLES}`}
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }
+            allowTabDeactivation
           >
             <Tabs.List>
               {tabList.map((tab, idx) => (
-                <Tabs.Tab value={tab.label} key={idx}>
-                  {tab.label}
+                <Tabs.Tab value={`${tab.itemKey}`} key={idx}>
+                  <Tooltip label={tab.label}>{tab.icon}</Tooltip>
                 </Tabs.Tab>
               ))}
             </Tabs.List>
 
             {tabList.map((tab, idx) => (
-              <Tabs.Panel value={tab.label} key={idx}>
+              <Tabs.Panel value={`${tab.itemKey}`} key={`panel_${idx}`}>
                 <div className="p-2">{tab.component}</div>
               </Tabs.Panel>
             ))}

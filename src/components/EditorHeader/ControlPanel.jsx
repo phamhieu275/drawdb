@@ -1,25 +1,30 @@
 import { useState } from "react";
 import {
-  IconCaretdown,
+  IconPencil,
+  IconCaretDownFilled,
   IconChevronRight,
   IconChevronUp,
   IconChevronDown,
-  IconSaveStroked,
-  IconUndo,
-  IconRedo,
-  IconEdit,
-} from "@douyinfe/semi-icons";
+  IconDeviceFloppy,
+  IconArrowBackUp,
+  IconArrowForwardUp,
+  IconListCheck,
+  IconBrightnessFilled,
+} from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon_dark_64.png";
 import {
-  Button,
+  Text,
   Divider,
-  Dropdown,
-  InputNumber,
+  Menu,
+  NumberInput,
   Tooltip,
-  Spin,
-  Popconfirm,
-} from "@douyinfe/semi-ui";
+  Loader,
+  ActionIcon,
+  useMantineColorScheme,
+} from "@mantine/core";
+import { modals } from "@mantine/modals";
+
 import { toPng } from "html-to-image";
 import {
   ObjectType,
@@ -61,6 +66,7 @@ export default function ControlPanel({
   setTitle,
   lastSaved,
 }) {
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
   const [modal, setModal] = useState(MODAL.NONE);
   const [sidesheet, setSidesheet] = useState(SIDESHEET.NONE);
   const [showEditName, setShowEditName] = useState(false);
@@ -1056,59 +1062,57 @@ export default function ControlPanel({
       <div className="py-1.5 px-5 flex justify-between items-center rounded-xl my-1 sm:mx-1 xl:mx-6 select-none overflow-hidden toolbar-theme">
         <div className="flex justify-start items-center">
           <LayoutDropdown />
-          <Divider layout="vertical" margin="8px" />
-          <Dropdown
-            style={{ width: "240px" }}
-            position="bottomLeft"
-            render={
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={fitWindow}
-                  style={{ display: "flex", justifyContent: "space-between" }}
+          <Divider orientation="vertical" margin="8px" />
+          <Menu width={240} position="bottom-start">
+            <Menu.Target>
+              <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
+                <div className="w-[40px]">
+                  {Math.floor(transform.zoom * 100)}%
+                </div>
+                <div>
+                  <IconCaretDownFilled />
+                </div>
+              </div>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                onClick={fitWindow}
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <div>{t("fit_window_reset")}</div>
+                <div className="text-gray-400">Ctrl+Alt+W</div>
+              </Menu.Item>
+              <Menu.Divider />
+              {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
+                <Menu.Item
+                  key={i}
+                  onClick={() => {
+                    setTransform((prev) => ({ ...prev, zoom: e }));
+                  }}
                 >
-                  <div>{t("fit_window_reset")}</div>
-                  <div className="text-gray-400">Ctrl+Alt+W</div>
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                {[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0].map((e, i) => (
-                  <Dropdown.Item
-                    key={i}
-                    onClick={() => {
-                      setTransform((prev) => ({ ...prev, zoom: e }));
-                    }}
-                  >
-                    {Math.floor(e * 100)}%
-                  </Dropdown.Item>
-                ))}
-                <Dropdown.Divider />
-                <Dropdown.Item>
-                  <InputNumber
-                    field="zoom"
-                    label={t("zoom")}
-                    placeholder={t("zoom")}
-                    suffix={<div className="p-1">%</div>}
-                    onChange={(v) =>
-                      setTransform((prev) => ({
-                        ...prev,
-                        zoom: parseFloat(v) * 0.01,
-                      }))
-                    }
-                  />
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            }
-            trigger="click"
-          >
-            <div className="py-1 px-2 hover-2 rounded flex items-center justify-center">
-              <div className="w-[40px]">
-                {Math.floor(transform.zoom * 100)}%
-              </div>
-              <div>
-                <IconCaretdown />
-              </div>
-            </div>
-          </Dropdown>
-          <Tooltip content={t("zoom_in")} position="bottom">
+                  {Math.floor(e * 100)}%
+                </Menu.Item>
+              ))}
+              <Menu.Divider />
+              <Menu.Item>
+                <NumberInput
+                  field="zoom"
+                  label={t("zoom")}
+                  placeholder={t("zoom")}
+                  suffix="%"
+                  allowNegative={false}
+                  allowDecimal={false}
+                  onChange={(v) =>
+                    setTransform((prev) => ({
+                      ...prev,
+                      zoom: parseInt(v) * 0.01,
+                    }))
+                  }
+                />
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+          <Tooltip label={t("zoom_in")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
@@ -1118,7 +1122,7 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-plus" />
             </button>
           </Tooltip>
-          <Tooltip content={t("zoom_out")} position="bottom">
+          <Tooltip label={t("zoom_out")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded text-lg"
               onClick={() =>
@@ -1128,31 +1132,31 @@ export default function ControlPanel({
               <i className="fa-solid fa-magnifying-glass-minus" />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("undo")} position="bottom">
+          <Divider orientation="vertical" margin="8px" />
+          <Tooltip label={t("undo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={undo}
             >
-              <IconUndo
-                size="large"
+              <IconArrowBackUp
+                size="24"
                 style={{ color: undoStack.length === 0 ? "#9598a6" : "" }}
               />
             </button>
           </Tooltip>
-          <Tooltip content={t("redo")} position="bottom">
+          <Tooltip label={t("redo")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={redo}
             >
-              <IconRedo
-                size="large"
+              <IconArrowForwardUp
+                size="24"
                 style={{ color: redoStack.length === 0 ? "#9598a6" : "" }}
               />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("add_table")} position="bottom">
+          <Divider orientation="vertical" margin="8px" />
+          <Tooltip label={t("add_table")} position="bottom">
             <button
               className="flex items-center py-1 px-2 hover-2 rounded"
               onClick={() => addTable()}
@@ -1160,7 +1164,7 @@ export default function ControlPanel({
               <IconAddTable />
             </button>
           </Tooltip>
-          <Tooltip content={t("add_area")} position="bottom">
+          <Tooltip label={t("add_area")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addArea()}
@@ -1168,7 +1172,7 @@ export default function ControlPanel({
               <IconAddArea />
             </button>
           </Tooltip>
-          <Tooltip content={t("add_note")} position="bottom">
+          <Tooltip label={t("add_note")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={() => addNote()}
@@ -1176,40 +1180,44 @@ export default function ControlPanel({
               <IconAddNote />
             </button>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("save")} position="bottom">
+          <Divider orientation="vertical" margin="8px" />
+          <Tooltip label={t("save")} position="bottom">
             <button
               className="py-1 px-2 hover-2 rounded flex items-center"
               onClick={save}
             >
-              <IconSaveStroked size="extra-large" />
+              <IconDeviceFloppy size="30" />
             </button>
           </Tooltip>
-          <Tooltip content={t("to_do")} position="bottom">
-            <button
+          <Tooltip label={t("to_do")} position="bottom">
+            <ActionIcon
               className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => setSidesheet(SIDESHEET.TODO)}
+              variant="transparent"
+              color={colorScheme === "dark" ? "white" : "dark"}
             >
-              <i className="fa-regular fa-calendar-check" />
-            </button>
+              <IconListCheck />
+            </ActionIcon>
           </Tooltip>
-          <Divider layout="vertical" margin="8px" />
-          <Tooltip content={t("theme")} position="bottom">
-            <button
+          <Divider orientation="vertical" mx="xs" />
+          <Tooltip label={t("theme")} position="bottom">
+            <ActionIcon
               className="py-1 px-2 hover-2 rounded text-xl -mt-0.5"
               onClick={() => {
+                const newMode = colorScheme === "dark" ? "light" : "dark";
+                setColorScheme(newMode);
                 const body = document.body;
                 if (body.hasAttribute("theme-mode")) {
-                  if (body.getAttribute("theme-mode") === "light") {
-                    menu["view"]["theme"].children[1]["dark"]();
-                  } else {
-                    menu["view"]["theme"].children[0]["light"]();
-                  }
+                  body.setAttribute("theme-mode", newMode);
                 }
+                localStorage.setItem("theme", newMode);
+                setSettings((prev) => ({ ...prev, mode: newMode }));
               }}
+              variant="transparent"
+              color={colorScheme === "dark" ? "light" : "dark"}
             >
-              <i className="fa-solid fa-circle-half-stroke" />
-            </button>
+              <IconBrightnessFilled />
+            </ActionIcon>
           </Tooltip>
         </div>
         <button
@@ -1262,115 +1270,117 @@ export default function ControlPanel({
                 {window.name.split(" ")[0] === "t" ? "Templates/" : "Diagrams/"}
                 {title}
               </div>
-              {(showEditName || modal === MODAL.RENAME) && <IconEdit />}
+              {(showEditName || modal === MODAL.RENAME) && <IconPencil />}
             </div>
             <div className="flex justify-between items-center">
               <div className="flex justify-start text-md select-none me-2">
                 {Object.keys(menu).map((category) => (
-                  <Dropdown
+                  <Menu
                     key={category}
-                    position="bottomLeft"
-                    style={{ width: "240px" }}
-                    render={
-                      <Dropdown.Menu>
-                        {Object.keys(menu[category]).map((item, index) => {
-                          if (menu[category][item].children) {
-                            return (
-                              <Dropdown
-                                style={{ width: "120px" }}
-                                key={item}
-                                position="rightTop"
-                                render={
-                                  <Dropdown.Menu>
-                                    {menu[category][item].children.map(
-                                      (e, i) => (
-                                        <Dropdown.Item
-                                          key={i}
-                                          onClick={Object.values(e)[0]}
-                                        >
-                                          {t(Object.keys(e)[0])}
-                                        </Dropdown.Item>
-                                      ),
-                                    )}
-                                  </Dropdown.Menu>
-                                }
-                              >
-                                <Dropdown.Item
+                    position="bottom-start"
+                    trigger="hover"
+                    width={200}
+                  >
+                    <Menu.Target>
+                      <div className="px-3 py-1 hover-2 rounded">
+                        {t(category)}
+                      </div>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                      {Object.keys(menu[category]).map((item, index) => {
+                        if (menu[category][item].children) {
+                          return (
+                            <Menu
+                              key={item}
+                              position="right-start"
+                              trigger="hover"
+                              width={120}
+                            >
+                              <Menu.Target>
+                                <Menu.Item
                                   style={{
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
                                   }}
                                   onClick={menu[category][item].function}
+                                  rightSection={<IconChevronRight />}
                                 >
                                   {t(item)}
-                                  <IconChevronRight />
-                                </Dropdown.Item>
-                              </Dropdown>
-                            );
-                          }
-                          if (menu[category][item].warning) {
-                            return (
-                              <Popconfirm
-                                key={index}
-                                title={menu[category][item].warning.title}
-                                content={menu[category][item].warning.message}
-                                onConfirm={menu[category][item].function}
-                                position="right"
-                                okText={t("confirm")}
-                                cancelText={t("cancel")}
-                              >
-                                <Dropdown.Item>{t(item)}</Dropdown.Item>
-                              </Popconfirm>
-                            );
-                          }
+                                </Menu.Item>
+                              </Menu.Target>
+                              <Menu.Dropdown>
+                                {menu[category][item].children.map((e, i) => (
+                                  <Menu.Item
+                                    key={i}
+                                    onClick={Object.values(e)[0]}
+                                  >
+                                    {t(Object.keys(e)[0])}
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Dropdown>
+                            </Menu>
+                          );
+                        }
+
+                        if (menu[category][item].warning) {
                           return (
-                            <Dropdown.Item
+                            <Menu.Item
                               key={index}
-                              onClick={menu[category][item].function}
-                              style={
-                                menu[category][item].shortcut && {
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                }
+                              onClick={() =>
+                                modals.openConfirmModal({
+                                  title: menu[category][item].warning.title,
+                                  children:
+                                    menu[category][item].warning.message,
+                                  labels: {
+                                    confirm: t("confirm"),
+                                    cancel: t("cancel"),
+                                  },
+                                  onConfirm: menu[category][item].function,
+                                })
                               }
                             >
-                              <div className="w-full flex items-center justify-between">
-                                <div>{t(item)}</div>
-                                <div className="flex items-center gap-1">
-                                  {menu[category][item].shortcut && (
-                                    <div className="text-gray-400">
-                                      {menu[category][item].shortcut}
-                                    </div>
-                                  )}
-                                  {menu[category][item].state &&
-                                    menu[category][item].state}
-                                </div>
-                              </div>
-                            </Dropdown.Item>
+                              {t(item)}
+                            </Menu.Item>
                           );
-                        })}
-                      </Dropdown.Menu>
-                    }
-                  >
-                    <div className="px-3 py-1 hover-2 rounded">
-                      {t(category)}
-                    </div>
-                  </Dropdown>
+                        }
+
+                        return (
+                          <Menu.Item
+                            key={index}
+                            onClick={menu[category][item].function}
+                            style={
+                              menu[category][item].shortcut && {
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }
+                            }
+                          >
+                            <div className="w-full flex items-center justify-between">
+                              <div>{t(item)}</div>
+                              <div className="flex items-center gap-1">
+                                {menu[category][item].shortcut && (
+                                  <div className="text-gray-400">
+                                    {menu[category][item].shortcut}
+                                  </div>
+                                )}
+                                {menu[category][item].state &&
+                                  menu[category][item].state}
+                              </div>
+                            </div>
+                          </Menu.Item>
+                        );
+                      })}
+                    </Menu.Dropdown>
+                  </Menu>
                 ))}
               </div>
-              <Button
-                size="small"
-                type="tertiary"
-                icon={
-                  saveState === State.LOADING || saveState === State.SAVING ? (
-                    <Spin size="small" />
-                  ) : null
-                }
-              >
+              <Text size="sm">
+                {(saveState === State.LOADING ||
+                  saveState === State.SAVING) && <Loader size="20" />}
                 {getState()}
-              </Button>
+              </Text>
             </div>
           </div>
         </div>
