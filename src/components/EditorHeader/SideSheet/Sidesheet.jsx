@@ -1,4 +1,4 @@
-import { SideSheet as SemiUISideSheet } from "@douyinfe/semi-ui";
+import { Drawer } from "@mantine/core";
 import { SIDESHEET } from "../../../data/constants";
 import { useSettings } from "../../../hooks";
 import timeLine from "../../../assets/process.png";
@@ -49,15 +49,14 @@ export default function Sidesheet({ type, onClose }) {
   }
 
   return (
-    <SemiUISideSheet
-      visible={type !== SIDESHEET.NONE}
-      onCancel={onClose}
+    <Drawer
+      position="right"
+      opened={type !== SIDESHEET.NONE}
+      onClose={onClose}
       width={340}
       title={getTitle(type)}
-      style={{ paddingBottom: "16px" }}
-      bodyStyle={{ padding: "0px" }}
     >
       {getContent(type)}
-    </SemiUISideSheet>
+    </Drawer>
   );
 }

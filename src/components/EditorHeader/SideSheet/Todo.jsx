@@ -1,24 +1,23 @@
 import { useState } from "react";
 import {
   Checkbox,
-  Input,
-  TextArea,
-  Row,
-  Col,
-  Dropdown,
+  TextInput,
+  Textarea,
+  Grid,
+  Menu,
   Button,
-  Popover,
-  Tag,
+  // Popover,
+  // Tag,
   List,
-  RadioGroup,
-  Radio,
-} from "@douyinfe/semi-ui";
+  // RadioGroup,
+  // Radio,
+} from "@mantine/core";
 import {
   IconPlus,
-  IconMore,
-  IconDeleteStroked,
-  IconCaretdown,
-} from "@douyinfe/semi-icons";
+  // IconMore,
+  // IconTrash,
+  IconCaretDownFilled,
+} from "@tabler/icons-react";
 import { State } from "../../../data/constants";
 import { useTasks, useSaveState } from "../../../hooks";
 import { useTranslation } from "react-i18next";
@@ -44,35 +43,35 @@ export default function Todo() {
   const { setSaveState } = useSaveState();
   const { t } = useTranslation();
 
-  const priorityLabel = (p) => {
-    switch (p) {
-      case Priority.NONE:
-        return t("none");
-      case Priority.LOW:
-        return t("low");
-      case Priority.MEDIUM:
-        return t("medium");
-      case Priority.HIGH:
-        return t("high");
-      default:
-        return "";
-    }
-  };
+  // const priorityLabel = (p) => {
+  //   switch (p) {
+  //     case Priority.NONE:
+  //       return t("none");
+  //     case Priority.LOW:
+  //       return t("low");
+  //     case Priority.MEDIUM:
+  //       return t("medium");
+  //     case Priority.HIGH:
+  //       return t("high");
+  //     default:
+  //       return "";
+  //   }
+  // };
 
-  const priorityColor = (p) => {
-    switch (p) {
-      case Priority.NONE:
-        return "blue";
-      case Priority.LOW:
-        return "green";
-      case Priority.MEDIUM:
-        return "yellow";
-      case Priority.HIGH:
-        return "red";
-      default:
-        return "";
-    }
-  };
+  // const priorityColor = (p) => {
+  //   switch (p) {
+  //     case Priority.NONE:
+  //       return "blue";
+  //     case Priority.LOW:
+  //       return "green";
+  //     case Priority.MEDIUM:
+  //       return "yellow";
+  //     case Priority.HIGH:
+  //       return "red";
+  //     default:
+  //       return "";
+  //   }
+  // };
 
   const sort = (s) => {
     setActiveTask(-1);
@@ -107,35 +106,33 @@ export default function Todo() {
   return (
     <>
       <div className="flex justify-between items-center mx-5 mb-2 sidesheet-theme">
-        <Dropdown
-          render={
-            <Dropdown.Menu>
-              {Object.values(SortOrder).map((order) => (
-                <Dropdown.Item
-                  key={order}
-                  onClick={() => {
-                    setSortOrder(order);
-                    sort(order);
-                  }}
-                >
-                  {t(order)}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          }
-          trigger="click"
-        >
-          <Button
-            style={{ marginRight: "10px" }}
-            theme="borderless"
-            type="tertiary"
-          >
-            {t("sort_by")} <IconCaretdown />
-          </Button>
-        </Dropdown>
+        <Menu>
+          <Menu.Target>
+            <Button
+              style={{ marginRight: "10px" }}
+              theme="borderless"
+              type="tertiary"
+            >
+              {t("sort_by")} <IconCaretDownFilled />
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            {Object.values(SortOrder).map((order) => (
+              <Menu.Item
+                key={order}
+                onClick={() => {
+                  setSortOrder(order);
+                  sort(order);
+                }}
+              >
+                {t(order)}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        </Menu>
         <Button
-          icon={<IconPlus />}
-          block
+          leftSection={<IconPlus />}
+          fullWidth
           onClick={() => {
             setTasks((prev) => [
               {
@@ -162,8 +159,8 @@ export default function Todo() {
               onClick={() => setActiveTask(i)}
             >
               <div className="w-full">
-                <Row gutter={6} align="middle" type="flex" className="mb-2">
-                  <Col span={2}>
+                <Grid justify="center" align="center" className="mb-2">
+                  <Grid.Col span={2}>
                     <Checkbox
                       checked={task.complete}
                       onChange={(e) => {
@@ -171,16 +168,16 @@ export default function Todo() {
                         setSaveState(State.SAVING);
                       }}
                     ></Checkbox>
-                  </Col>
-                  <Col span={19}>
-                    <Input
+                  </Grid.Col>
+                  <Grid.Col span={10}>
+                    <TextInput
                       placeholder={t("title")}
-                      onChange={(v) => updateTask(i, { title: v })}
+                      onChange={(e) => updateTask(i, { title: e.target.value })}
                       value={task.title}
                       onBlur={() => setSaveState(State.SAVING)}
                     />
-                  </Col>
-                  <Col span={3}>
+                  </Grid.Col>
+                  {/* <Grid.Col span={3}>
                     <Popover
                       content={
                         <div className="p-2 popover-theme">
@@ -217,9 +214,9 @@ export default function Todo() {
                             </Radio>
                           </RadioGroup>
                           <Button
-                            icon={<IconDeleteStroked />}
-                            type="danger"
-                            block
+                            leftSection={<IconTrash />}
+                            color="red"
+                            fullWidth
                             style={{ marginTop: "12px" }}
                             onClick={() => {
                               setTasks((prev) =>
@@ -238,30 +235,31 @@ export default function Todo() {
                     >
                       <Button icon={<IconMore />} type="tertiary" />
                     </Popover>
-                  </Col>
-                </Row>
+                  </Grid.Col> */}
+                </Grid>
                 {activeTask === i && (
-                  <Row className="mb-2">
-                    <Col span={2}></Col>
-                    <Col span={22}>
-                      <TextArea
+                  <Grid justify="center" align="center" className="mb-2">
+                    <Grid.Col offset={2} span={10}>
+                      <Textarea
                         placeholder={t("details")}
-                        onChange={(v) => updateTask(i, { details: v })}
+                        onChange={(e) =>
+                          updateTask(i, { details: e.target.value })
+                        }
                         value={task.details}
                         onBlur={() => setSaveState(State.SAVING)}
-                      ></TextArea>
-                    </Col>
-                  </Row>
+                      ></Textarea>
+                    </Grid.Col>
+                  </Grid>
                 )}
-                <Row>
-                  <Col span={2}></Col>
-                  <Col span={22}>
+                {/* <Grid>
+                  <Grid.Col span={2}></Grid.Col>
+                  <Grid.Col span={22}>
                     {t("priority")}:{" "}
                     <Tag color={priorityColor(task.priority)}>
                       {priorityLabel(task.priority)}
                     </Tag>
-                  </Col>
-                </Row>
+                  </Grid.Col>
+                </Grid> */}
               </div>
             </List.Item>
           ))}

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useUndoRedo } from "../../../hooks";
-import { List } from "@douyinfe/semi-ui";
+import { Timeline as MantineTimeline, Text } from "@mantine/core";
 
 export default function Timeline() {
   const { undoStack } = useUndoRedo();
@@ -8,20 +8,15 @@ export default function Timeline() {
 
   if (undoStack.length > 0) {
     return (
-      <List className="sidesheet-theme">
+      <MantineTimeline active={0} lineWidth={2}>
         {[...undoStack].reverse().map((e, i) => (
-          <List.Item
-            key={i}
-            style={{ padding: "4px 18px 4px 18px" }}
-            className="hover-1"
-          >
-            <div className="flex items-center py-1 w-full">
-              <i className="block fa-regular fa-circle fa-xs" />
-              <div className="ms-2">{e.message}</div>
-            </div>
-          </List.Item>
+          <MantineTimeline.Item key={i}>
+            <Text c="dimmed" size="sm">
+              {e.message}
+            </Text>
+          </MantineTimeline.Item>
         ))}
-      </List>
+      </MantineTimeline>
     );
   } else {
     return <div className="m-5 sidesheet-theme">{t("no_activity")}</div>;
