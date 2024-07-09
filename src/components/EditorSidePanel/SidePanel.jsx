@@ -62,13 +62,11 @@ export default function SidePanel({ width, resize, setResize }) {
       >
         <div className="h-full flex-1 overflow-y-auto">
           <Tabs
-            orientation="vertical"
-            value={selectedElement.currentTab || `${TabIndex.TABLES}`}
+            value={`${selectedElement.currentTab}`}
             defaultValue={`${TabIndex.TABLES}`}
             onChange={(key) =>
               setSelectedElement((prev) => ({ ...prev, currentTab: key }))
             }
-            allowTabDeactivation
           >
             <Tabs.List>
               {tabList.map((tab, idx) => (

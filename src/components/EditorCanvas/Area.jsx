@@ -267,8 +267,7 @@ function EditPopoverContent({ data }) {
       <div className="flex">
         <Button
           leftSection={<IconTrash />}
-          variant="filled"
-          color="red"
+          variant="danger"
           onClick={() => deleteArea(data.id, true)}
           fullWidth
         >

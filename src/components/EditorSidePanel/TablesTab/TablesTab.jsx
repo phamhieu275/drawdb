@@ -1,5 +1,5 @@
 import { Button, Accordion } from "@mantine/core";
-import { IconPlus } from "@douyinfe/semi-icons";
+import { IconPlus } from "@tabler/icons-react";
 import { useSelect, useTables } from "../../../hooks";
 import { ObjectType } from "../../../data/constants";
 import SearchBar from "./SearchBar";
@@ -30,7 +30,7 @@ export default function TablesTab() {
         <Empty title={t("no_tables")} text={t("no_tables_text")} />
       ) : (
         <Accordion
-          defaultValue={
+          value={
             selectedElement.open && selectedElement.element === ObjectType.TABLE
               ? `${selectedElement.id}`
               : ""

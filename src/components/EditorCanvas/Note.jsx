@@ -264,7 +264,7 @@ export default function Note({ data, onMouseDown }) {
                       <div className="flex">
                         <Button
                           leftSection={<IconTrash />}
-                          color="red"
+                          variant="danger"
                           fullWidth
                           onClick={() => deleteNote(data.id, true)}
                         >

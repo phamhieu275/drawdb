@@ -9,20 +9,31 @@ import LandingPage from "./pages/LandingPage";
 import SettingsContextProvider from "./context/SettingsContext";
 import useSettings from "./hooks/useSettings";
 import NotFound from "./pages/NotFound";
-import { createTheme, MantineProvider } from "@mantine/core";
+import { defaultVariantColorsResolver, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
 
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 
-const theme = createTheme({
-  /** Put your mantine theme override here */
-});
+const variantColorResolver = (input) => {
+  const defaultResolvedColors = defaultVariantColorsResolver(input);
+
+  // Add new variants support
+  if (input.variant === "danger") {
+    return {
+      background: "var(--mantine-color-red-5)",
+      hover: "var(--mantine-color-red-6)",
+      color: "var(--mantine-color-white)",
+    };
+  }
+
+  return defaultResolvedColors;
+};
 
 export default function App() {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={{ variantColorResolver }}>
       <Notifications position="top-center" />
       <SettingsContextProvider>
         <BrowserRouter>

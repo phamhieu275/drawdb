@@ -167,7 +167,7 @@ export default function Table(props) {
                     </div>
                     <Button
                       leftSection={<IconTrash />}
-                      color="red"
+                      variant="danger"
                       fullWidth
                       style={{ marginTop: "8px" }}
                       onClick={() => deleteTable(tableData.id)}
@@ -337,8 +337,7 @@ export default function Table(props) {
         <div className="text-zinc-400">
           {hoveredField === index ? (
             <ActionIcon
-              variant="filled"
-              color="red"
+              variant="danger"
               onClick={() => deleteField(fieldData, tableData.id)}
             >
               <IconMinus />

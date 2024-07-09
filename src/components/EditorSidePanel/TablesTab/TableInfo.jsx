@@ -1,13 +1,14 @@
 import { useState } from "react";
 import {
-  Collapse,
-  Input,
-  TextArea,
+  TextInput,
+  Textarea,
   Button,
   Card,
   Popover,
-} from "@douyinfe/semi-ui";
-import { IconDeleteStroked } from "@douyinfe/semi-icons";
+  ActionIcon,
+  Accordion,
+} from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 import { useTables, useUndoRedo } from "../../../hooks";
 import { Action, ObjectType, defaultBlue } from "../../../data/constants";
 import ColorPalette from "../../ColorPicker";
@@ -17,7 +18,7 @@ import { useTranslation } from "react-i18next";
 
 export default function TableInfo({ data }) {
   const { t } = useTranslation();
-  const [indexActiveKey, setIndexActiveKey] = useState("");
+  const [indexActiveKey, setIndexActiveKey] = useState(null);
   const { deleteTable, updateTable, updateField, setRelationships } =
     useTables();
   const { setUndoStack, setRedoStack } = useUndoRedo();
@@ -31,12 +32,13 @@ export default function TableInfo({ data }) {
     <div>
       <div className="flex items-center mb-2.5">
         <div className="text-md font-semibold break-keep">{t("name")}: </div>
-        <Input
+        <TextInput
+          variant="filled"
           value={data.name}
-          validateStatus={data.name.trim() === "" ? "error" : "default"}
+          error={data.name.trim() === ""}
           placeholder={t("name")}
-          className="ms-2"
-          onChange={(value) => updateTable(data.id, { name: value })}
+          className="ms-2 w-full"
+          onChange={(e) => updateTable(data.id, { name: e.target.value })}
           onFocus={(e) => setEditField({ name: e.target.value })}
           onBlur={(e) => {
             if (e.target.value === editField.name) return;
@@ -138,51 +140,19 @@ export default function TableInfo({ data }) {
           <TableField data={f} tid={data.id} index={j} />
         </div>
       ))}
-      {data.indices.length > 0 && (
-        <Card
-          bodyStyle={{ padding: "4px" }}
-          style={{ marginTop: "12px", marginBottom: "12px" }}
-          headerLine={false}
-        >
-          <Collapse
-            activeKey={indexActiveKey}
-            keepDOM
-            lazyRender
-            onChange={(itemKey) => setIndexActiveKey(itemKey)}
-            accordion
-          >
-            <Collapse.Panel header={t("indices")} itemKey="1">
-              {data.indices.map((idx, k) => (
-                <IndexDetails
-                  key={"index_" + k}
-                  data={idx}
-                  iid={k}
-                  tid={data.id}
-                  fields={data.fields.map((e) => ({
-                    value: e.name,
-                    label: e.name,
-                  }))}
-                />
-              ))}
-            </Collapse.Panel>
-          </Collapse>
-        </Card>
-      )}
-      <Card
-        bodyStyle={{ padding: "4px" }}
-        style={{ marginTop: "12px", marginBottom: "12px" }}
-        headerLine={false}
-      >
-        <Collapse keepDOM lazyRender>
-          <Collapse.Panel header={t("comment")} itemKey="1">
-            <TextArea
+      <Card padding="0" radius="md" withBorder className="my-4">
+        <Accordion>
+          <Accordion.Control>{t("comment")}</Accordion.Control>
+          <Accordion.Panel>
+            <Textarea
+              variant="filled"
               field="comment"
               value={data.comment}
               autosize
               placeholder={t("comment")}
-              rows={1}
-              onChange={(value) =>
-                updateTable(data.id, { comment: value }, false)
+              size="md"
+              onChange={(e) =>
+                updateTable(data.id, { comment: e.target.value }, false)
               }
               onFocus={(e) => setEditField({ comment: e.target.value })}
               onBlur={(e) => {
@@ -205,70 +175,89 @@ export default function TableInfo({ data }) {
                 setRedoStack([]);
               }}
             />
-          </Collapse.Panel>
-        </Collapse>
+          </Accordion.Panel>
+        </Accordion>
       </Card>
+
+      {data.indices.length > 0 && (
+        <Card padding="0" radius="md" withBorder className="my-4">
+          <Accordion value={indexActiveKey} onChange={setIndexActiveKey}>
+            <Accordion.Item value="1">
+              <Accordion.Control>{t("indices")}</Accordion.Control>
+              <Accordion.Panel>
+                {data.indices.map((idx, k) => (
+                  <IndexDetails
+                    key={"index_" + k}
+                    data={idx}
+                    iid={k}
+                    tid={data.id}
+                    fields={data.fields.map((e) => ({
+                      value: e.name,
+                      label: e.name,
+                    }))}
+                  />
+                ))}
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        </Card>
+      )}
       <div className="flex justify-between items-center gap-1 mb-2">
-        <div>
-          <Popover
-            content={
-              <div className="popover-theme">
-                <ColorPalette
-                  currentColor={data.color}
-                  onClearColor={() => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: defaultBlue },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: defaultBlue });
-                  }}
-                  onPickColor={(c) => {
-                    setUndoStack((prev) => [
-                      ...prev,
-                      {
-                        action: Action.EDIT,
-                        element: ObjectType.TABLE,
-                        component: "self",
-                        tid: data.id,
-                        undo: { color: data.color },
-                        redo: { color: c },
-                        message: t("edit_table", {
-                          tableName: data.name,
-                          extra: "[color]",
-                        }),
-                      },
-                    ]);
-                    setRedoStack([]);
-                    updateTable(data.id, { color: c });
-                  }}
-                />
-              </div>
-            }
-            trigger="click"
-            position="bottomLeft"
-            showArrow
-          >
+        <Popover position="bottom-start" withArrow>
+          <Popover.Target>
             <div
               className="h-[32px] w-[32px] rounded"
               style={{ backgroundColor: data.color }}
             />
-          </Popover>
-        </div>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <ColorPalette
+              currentColor={data.color}
+              onClearColor={() => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "self",
+                    tid: data.id,
+                    undo: { color: data.color },
+                    redo: { color: defaultBlue },
+                    message: t("edit_table", {
+                      tableName: data.name,
+                      extra: "[color]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+                updateTable(data.id, { color: defaultBlue });
+              }}
+              onPickColor={(c) => {
+                setUndoStack((prev) => [
+                  ...prev,
+                  {
+                    action: Action.EDIT,
+                    element: ObjectType.TABLE,
+                    component: "self",
+                    tid: data.id,
+                    undo: { color: data.color },
+                    redo: { color: c },
+                    message: t("edit_table", {
+                      tableName: data.name,
+                      extra: "[color]",
+                    }),
+                  },
+                ]);
+                setRedoStack([]);
+                updateTable(data.id, { color: c });
+              }}
+            />
+          </Popover.Dropdown>
+        </Popover>
         <div className="flex gap-1">
           <Button
-            block
+            variant="light"
+            fullWidth
             onClick={() => {
               setIndexActiveKey("1");
               setUndoStack((prev) => [
@@ -301,6 +290,7 @@ export default function TableInfo({ data }) {
             {t("add_index")}
           </Button>
           <Button
+            variant="light"
             onClick={() => {
               setUndoStack((prev) => [
                 ...prev,
@@ -334,15 +324,18 @@ export default function TableInfo({ data }) {
                 ],
               });
             }}
-            block
+            fullWidth
           >
             {t("add_field")}
           </Button>
-          <Button
-            icon={<IconDeleteStroked />}
-            type="danger"
+          <ActionIcon
+            variant="light"
+            color="gray"
+            size="lg"
             onClick={() => deleteTable(data.id)}
-          />
+          >
+            <IconTrash color="red" />
+          </ActionIcon>
         </div>
       </div>
     </div>

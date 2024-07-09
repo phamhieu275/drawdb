@@ -215,7 +215,7 @@ export default function Todo() {
                           </RadioGroup>
                           <Button
                             leftSection={<IconTrash />}
-                            color="red"
+                            variant="danger"
                             fullWidth
                             style={{ marginTop: "12px" }}
                             onClick={() => {
